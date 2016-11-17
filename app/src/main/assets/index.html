@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Example</title>
+
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+
+    <!-- No Baidu Siteapp-->
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <link rel="stylesheet" href="asset/css/bootstrap.min.css">
+</head>
+<body>
+
+<h3 class="text-center">二维码测试</h3>
+<hr>
+<div id="app">
+    <ul id="myTab" class="nav nav-tabs">
+        <li :class="{active: showGenerate}"><a href="#" @click="generate">生成二维码</a></li>
+        <li :class="{active: showScan}"><a href="#" @click="scan">识别二维码</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab_pane fade" :class="{in: showGenerate,active: showGenerate}" v-show="showGenerate">
+            <div class="panel panel-default well">
+                <div class="panel-heading">
+                    转换成二维码
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>文字:</label>
+                        <input type="text" class="form-control" v-model="toQr" placeholder="请输入"/>
+                    </div>
+                    <div class="center-block" style="width:200px;">
+                        <qrcode :val="toQr" :size="size" :bg-color="bgColor" :fg-color="fgColor" level="L"></qrcode>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab_pane fade" :class="{in: showScan,active: showScan}" v-show="showScan">
+            <div class="panel panel-default well">
+                <div class="panel-heading">
+                    扫描二维码
+                </div>
+                <div class="panel-body">
+                    <a href="#" class="btn btn-success center-block" @click="goScan">点击扫描</a>
+                    <hr>
+                    <div class="form-group">
+                        <label>结果:</label>
+                        <textarea class="form-control" v-model="fromQr" placeholder="请扫描" rows="2"></textarea>
+                        <hr>
+                        <a href="#" class="btn btn-success center-block" @click="goUrl">访问结果链接</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="asset/js/vue.js"></script>
+<script type="text/javascript" src="asset/js/vue-qrcode.js"></script>
+<script lang="javascript">
+    data = {
+        toQr: "https://github.com",
+        bgColor: "#FFFFFF",
+        fgColor: "#000000",
+        size: 200,
+        showGenerate: true,
+        showScan: false,
+        fromQr: ""
+    }
+
+	new Vue({
+		el: '#app',
+		components: {
+			qrcode: VueQr
+		},
+		data:data,
+        methods: {
+            generate: function(event){
+                data.showGenerate = true;
+                data.showScan = false;
+            },
+            scan:function(event){
+                data.showGenerate = false;
+                data.showScan = true;
+            },
+            goScan:function(event){
+                nativeScan();
+            },
+            goUrl:function(event){
+                window.location=data.fromQr;
+            }
+        }
+	})
+
+    function nativeScan(){
+        //调用android和ios的native方法
+        console.log("go native");
+		android.scan();
+    }
+
+    function getScanResult(result){
+        //回调
+        data.fromQr = result;
+    }
+
+</script>
+
+</body>
+</html>
+
